@@ -17,7 +17,7 @@ object KSepiumDriverManager {
      */
     private val webDrivers: MutableMap<Long, WebDriver> = ConcurrentHashMap()
 
-    var appiumDriverLocalService: MutableMap<Long, AppiumDriverLocalService> = ConcurrentHashMap()
+    private var appiumDriverLocalService: MutableMap<Long, AppiumDriverLocalService> = ConcurrentHashMap()
 
 //    fun createDriver(block: KSepiumDriver<*>.()-> Unit) {
 //        bindDriverToThread(block() as WebDriver)
@@ -60,5 +60,4 @@ object KSepiumDriverManager {
             getAppiumLocalService()!!.stop()
         }
     }
-
 }
