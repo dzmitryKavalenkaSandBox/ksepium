@@ -2,7 +2,7 @@ package org.dk.selenk.ksepium.driverconfig.configbuilder.mobileconfigbuilder
 
 import org.openqa.selenium.remote.DesiredCapabilities
 
-class AndroidDriverBuilder(private val appiumDriverBuilder: AppiumDriverBuilder) {
+class AndroidCapabilitiesBuilder(private val appiumCapabilitiesBuilder: AppiumCapabilitiesBuilder) {
 
     private val androidCapabilities: DesiredCapabilities = DesiredCapabilities()
 
@@ -17,5 +17,5 @@ class AndroidDriverBuilder(private val appiumDriverBuilder: AppiumDriverBuilder)
         androidCapabilities.setCapability("appWaitActivity", appWaitActivity)
     }
 
-    fun buildAndroidCapabilities(): DesiredCapabilities = appiumDriverBuilder.capabilities.merge(androidCapabilities)
+    fun buildAndroidCapabilities(): DesiredCapabilities = appiumCapabilitiesBuilder.capabilities.merge(androidCapabilities)
 }

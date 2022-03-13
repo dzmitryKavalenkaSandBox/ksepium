@@ -3,15 +3,14 @@ package org.dk.selenk.ksepium.driverconfig.configbuilder.mobileconfigbuilder
 import io.appium.java_client.remote.MobileCapabilityType
 import org.dk.selenk.common.AutomationType
 import org.dk.selenk.common.Platform
+import org.dk.selenk.common.SelenKConfig
 import org.dk.selenk.common.util.platfromexec.SelenKBuilderMarker
-import org.dk.selenk.ksepium.driverconfig.KAppiumDriver
 import org.openqa.selenium.remote.CapabilityType
 import org.openqa.selenium.remote.DesiredCapabilities
 
 @SelenKBuilderMarker
-class AppiumDriverBuilder(val capabilities: DesiredCapabilities = DesiredCapabilities()) {
-
-    lateinit var appiumDriver: KAppiumDriver
+class AppiumCapabilitiesBuilder(val capabilities: DesiredCapabilities = DesiredCapabilities()) :
+    DriverCapabilityBuilder<AppiumCapabilitiesBuilder>() {
 
     /**
      * Path to '.apk' file on android and '.app' for iOS ('.ipa' for real iOS device)
@@ -59,10 +58,15 @@ class AppiumDriverBuilder(val capabilities: DesiredCapabilities = DesiredCapabil
      */
     private var enableFullReset: Boolean = true
 
+    /**
+     * Version of platform OS
+     */
+    private var platformVersion: String = ""
+
 
     companion object {
-        inline fun buildAppiumDriver(buildAppiumDriver: AppiumDriverBuilder.() -> Unit): DesiredCapabilities {
-            val builder = AppiumDriverBuilder()
+        inline fun buildAppiumDriver(buildAppiumDriver: AppiumCapabilitiesBuilder.() -> Unit): DesiredCapabilities {
+            val builder = AppiumCapabilitiesBuilder()
             builder.buildAppiumDriver()
             return builder.build()
         }
@@ -76,7 +80,7 @@ class AppiumDriverBuilder(val capabilities: DesiredCapabilities = DesiredCapabil
 
     fun deviceUDID(deviceUDID: String) = apply {
         this.deviceUDID = deviceUDID
-            capabilities.setCapability(MobileCapabilityType.UDID, this.deviceUDID)
+        capabilities.setCapability(MobileCapabilityType.UDID, this.deviceUDID)
     }
 
     fun deviceName(deviceName: String) = apply {
@@ -87,11 +91,27 @@ class AppiumDriverBuilder(val capabilities: DesiredCapabilities = DesiredCapabil
     fun platform(platform: Platform) = apply {
         this.platformName = platform.name
         capabilities.setCapability(CapabilityType.PLATFORM_NAME, this.platformName)
+        SelenKConfig.platform = platform
     }
 
-    fun automationName(automationType: AutomationType) = apply {
+    fun platform(platform: String) = apply {
+        val resolvedPlatform = Platform.fromString(platform)
+        this.platformName = resolvedPlatform.name
+        capabilities.setCapability(CapabilityType.PLATFORM_NAME, this.platformName)
+        SelenKConfig.platform = resolvedPlatform
+    }
+
+    fun automationType(automationType: AutomationType) = apply {
         this.automationName = automationType.type
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, this.automationName)
+        SelenKConfig.automationType = automationType
+    }
+
+    fun automationType(automationType: String) = apply {
+        val resolvedAutomationType = AutomationType.fromString(automationType)
+        this.automationName = resolvedAutomationType.type
+        capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, this.automationName)
+        SelenKConfig.automationType = resolvedAutomationType
     }
 
     fun newCommandTimeout(newCommandTimeout: Int) = apply {
@@ -109,11 +129,23 @@ class AppiumDriverBuilder(val capabilities: DesiredCapabilities = DesiredCapabil
         capabilities.setCapability(MobileCapabilityType.FULL_RESET, this.enableFullReset)
     }
 
-    fun forAndroid(androidDriverBuilder: AndroidDriverBuilder.() -> Unit) = apply {
-        val builder = AndroidDriverBuilder(this)
-        builder.androidDriverBuilder()
+    fun platformVersion(version: String) = apply {
+        this.platformVersion = version
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, version)
+    }
+
+    fun forAndroid(androidCapabilitiesBuilder: AndroidCapabilitiesBuilder.() -> Unit) = apply {
+        val builder = AndroidCapabilitiesBuilder(this)
+        builder.androidCapabilitiesBuilder()
         builder.buildAndroidCapabilities()
     }
 
-    fun build(): DesiredCapabilities = capabilities
+    fun forIOS(iosCapabilitiesBuilder: IOSCapabilitiesBuilder.() -> Unit) = apply {
+        val builder = IOSCapabilitiesBuilder(this)
+        builder.iosCapabilitiesBuilder()
+        builder.buildIOSCapabilities()
+    }
+
+    override fun build(): DesiredCapabilities =
+        capabilities
 }

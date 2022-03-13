@@ -3,13 +3,13 @@ package org.dk.selenk.ksepium.driverconfig.configbuilder.mobileconfigbuilder
 import io.appium.java_client.remote.MobileCapabilityType
 import org.dk.selenk.common.AutomationType
 import org.dk.selenk.common.Platform
-import org.dk.selenk.ksepium.driverconfig.configbuilder.mobileconfigbuilder.AppiumDriverBuilder.Companion.buildAppiumDriver
+import org.dk.selenk.ksepium.driverconfig.configbuilder.mobileconfigbuilder.AppiumCapabilitiesBuilder.Companion.buildAppiumDriver
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.remote.CapabilityType
 
-class AppiumDriverBuilderTest {
+class AppiumCapabilitiesBuilderTest {
 
     @Test
     fun builderTest() {
@@ -20,7 +20,7 @@ class AppiumDriverBuilderTest {
             forAndroid {
                 appWaitActivity("com.example.com")
             }
-            automationName(AutomationType.UiAutomator2)
+            automationType(AutomationType.UiAutomator2)
             newCommandTimeout(200)
             deviceUDID("testUdid")
             pathToApplication("path/to/app")
